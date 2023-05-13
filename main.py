@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return jsonify({"message": "Hello, Worldo!"})
+    return jsonify({"message": "Hello, World!"})
 
 @app.route("/about")
 def about():
