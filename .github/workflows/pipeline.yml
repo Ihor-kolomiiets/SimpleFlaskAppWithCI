@@ -33,7 +33,7 @@ jobs:
       run: sudo apt install rsync -y
     - name: create key to connect
       run: |
-        echo '${{ secrets.AWSEC2_SSH_KEY }}' > key.pem
+        echo "${{ secrets.AWSEC2_SSH_KEY }}" > key.pem
         chmod 400 key.pem
     - name: copy files to ec2
       run: |
