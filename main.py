@@ -10,7 +10,7 @@ def index():
 
 @app.route("/about")
 def about():
-    return jsonify({"owner": "Ihor Kolomiiets"})
+    return jsonify({"owner": "Ihor Kolomiiets", "message": "OK"})
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')

@@ -1,0 +1,12 @@
+[Unit]
+Description=My flask API service
+[Install]
+WantedBy=multi-user.target
+[Service]
+Type=simple
+User=ec2-user
+PermissionsStartOnly=true
+WorkingDirectory=/home/ec2-user/FlaskApp
+ExecStart=/usr/bin/python3 /home/ec2-user/FlaskApp/main.py
+Restart=on-failure
+TimeoutSec=600 
