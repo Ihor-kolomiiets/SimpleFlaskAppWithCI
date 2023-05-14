@@ -57,7 +57,7 @@ jobs:
             sudo systemctl restart FlaskApp.service
           else 
             sudo mv ./FlaskApp/FlaskApp.service /lib/systemd/system/
-            sudo systemctl deamon-reload
+            sudo systemctl daemon-reload
             sudo systemctl enable FlaskApp.service
             sudo systemctl start FlaskApp.service
           fi
