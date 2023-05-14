@@ -50,6 +50,7 @@ jobs:
         username: ec2-user
         key_path: ./key.pem
         script: |
+          sudo yum -y install python-pip
           python3 -m pip install --upgrade pip
           pip install -r ./FlaskApp/requirements.txt
           sudo kill -9 \
