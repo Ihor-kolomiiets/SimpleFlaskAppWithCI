@@ -37,6 +37,7 @@ jobs:
         chmod 400 key.pem
     - name: copy files to ec2
       run: |
+        ssh-keygen -R ${{ secrets.AWSEC2_PUBLIC_IP }}
         rsync -e "ssh -i ./key.pem" ./* \
         ec2-user@${{ secrets.AWSEC2_PUBLIC_IP }}:./FlaskApp
     - name: restart FlaskApplication
