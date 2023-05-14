@@ -53,7 +53,10 @@ jobs:
           sudo yum -y install python-pip
           python3 -m pip install --upgrade pip
           pip install -r ./FlaskApp/requirements.txt
-          sudo kill -9 \
-          $(sudo netstat -tulnp | grep :5001 | awk '{print $NF}')
-          nohup python3 ./FlaskApp/main.py &
-          logout
+          if [ -f /lib/systemd/system/FlaskApp.service ]; then
+            sudo systemctl restart FlaskApp.service
+          else 
+            sudo mv ./FalskApp/FlaskApp.service /lib/systemd/system/
+            sudo systemctl enable FlaskApp.service
+            sudo systemctl start FlaskApp.service
+          fi
