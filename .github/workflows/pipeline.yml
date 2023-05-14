@@ -50,6 +50,7 @@ jobs:
         username: ec2-user
         key_path: ./key.pem
         script: |
+          python -m pip install --upgrade pip
           pip install -r ./FlaskApp/requirements.txt
           sudo kill -9 \
           $(sudo netstat -tulnp | grep :5001 | awk '{print $NF}')
