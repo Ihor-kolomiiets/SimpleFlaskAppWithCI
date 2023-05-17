@@ -53,9 +53,9 @@
       state: restarted
     become: yes
 
-handlers:
-  - name: Enable service
-    ansible.builtin.service:
-      name: FlaskApp.service
-      enabled: yes
-    become: yes
+  handlers:
+    - name: Enable service
+      ansible.builtin.service:
+        name: FlaskApp.service
+        enabled: yes
+      become: yes
