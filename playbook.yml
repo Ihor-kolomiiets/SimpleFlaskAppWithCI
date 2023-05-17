@@ -5,10 +5,10 @@
 
   tasks:
   - name: Create a directory if it does not exist
-  ansible.builtin.file:
-    path: ~/FlaskApp
-    state: directory
-    mode: '0755'
+    ansible.builtin.file:
+      path: ~/FlaskApp
+      state: directory
+      mode: '0755'
 
   - name: copy files to remote
     ansible.builtin.copy:
