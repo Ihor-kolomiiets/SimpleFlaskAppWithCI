@@ -1,0 +1,61 @@
+---
+- name: copy source file to remote and start web server
+  hosts: webserver
+  remote_user: ec2-user
+
+  tasks:
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: ~/FlaskApp
+      state: directory
+      mode: '0755'
+
+  - name: copy files to remote
+    ansible.builtin.copy:
+      src: ./main.py
+      dest: ~/FlaskApp/main.py
+  
+  - name: copy files to remote
+    ansible.builtin.copy:
+      src: ./requirements.txt
+      dest: ~/FlaskApp/requirements.txt
+  
+  - name: Install pip
+    ansible.builtin.yum:
+      name: python3-pip
+      state: latest
+    become: yes
+  
+  - name: Upgrading pip
+    ansible.builtin.shell: python3 -m pip install --upgrade pip
+  
+  - name: install requirements
+    ansible.builtin.pip:
+      requirements: ~/FlaskApp/requirements.txt
+
+  - name: Check that the service file exists
+    stat:
+      path: /lib/systemd/system/FlaskApp.service
+    register: stat_result
+
+  - name: copy the file, if it doesnt exist already
+    ansible.builtin.copy:
+      src: ./FlaskApp.service
+      dest: /lib/systemd/system/
+    become: yes
+    when: not stat_result.stat.exists  
+    notify:
+    - Enable service
+
+  - name: Restart service
+    ansible.builtin.service:
+      name: FlaskApp.service
+      state: restarted
+    become: yes
+
+  handlers:
+    - name: Enable service
+      ansible.builtin.service:
+        name: FlaskApp.service
+        enabled: yes
+      become: yes

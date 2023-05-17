@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  test:
+  test:  # Running tests on our code
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -24,40 +24,28 @@ jobs:
       run: |
         pytest test.py
   
-  ec2deploy:
+  ec2deploy:  # Deploying our code and running it on ec2 instance
     needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: installing rsync
-      run: sudo apt install rsync -y
-    - name: create key to connect
+    - name: install Ansible
+      run: python3 -m pip install ansible
+    - name: creating hosts file # Making inventory file
+      run: |
+        echo "[webserver]" > inventory.yml
+        echo ${{ secrets.AWSEC2_PUBLIC_IP }} >> inventory.yml
+    - name: create key to connect # Creating ssh key from secert
       run: |
         echo "${{ secrets.AWSEC2_SSH_KEY }}" > key.pem
         chmod 400 key.pem
-    - name: copy files to ec2
+    - name: creating ssh folders
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
         ssh-keyscan ${{ secrets.AWSEC2_PUBLIC_IP }} > ~/.ssh/known_hosts
         sudo chmod 600 ~/.ssh/known_hosts
-        rsync -e "ssh -i ./key.pem" ./* \
-        ec2-user@${{ secrets.AWSEC2_PUBLIC_IP }}:./FlaskApp
-    - name: restart FlaskApplication
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.AWSEC2_PUBLIC_IP }}
-        username: ec2-user
-        key_path: ./key.pem
-        script: |
-          sudo yum -y install python-pip
-          python3 -m pip install --upgrade pip
-          pip install -r ./FlaskApp/requirements.txt
-          if [ -f /lib/systemd/system/FlaskApp.service ]; then
-            sudo systemctl restart FlaskApp.service
-          else 
-            sudo mv ./FlaskApp/FlaskApp.service /lib/systemd/system/
-            sudo systemctl daemon-reload
-            sudo systemctl enable FlaskApp.service
-            sudo systemctl start FlaskApp.service
-          fi
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook -u ec2-user -i ./inventory.yml \
+        --private-key ./key.pem playbook.yml
