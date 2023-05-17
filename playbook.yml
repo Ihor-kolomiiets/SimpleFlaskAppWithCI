@@ -47,14 +47,15 @@
     notify:
     - Enable service
 
+  - name: Restart service
+    ansible.builtin.service:
+      name: FlaskApp.service
+      state: restarted
+    become: yes
+
+handlers:
   - name: Enable service
     ansible.builtin.service:
       name: FlaskApp.service
       enabled: yes
     become: yes
-  
-  - name: Restart service
-    ansible.builtin.service:
-      name: FlaskApp.service
-      state: restarted
-      become: yes
