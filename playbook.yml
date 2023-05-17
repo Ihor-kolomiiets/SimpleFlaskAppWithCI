@@ -31,7 +31,7 @@
   
   - name: install requirements
     ansible.builtin.pip:
-      requirements: ./FlaskApp/requirements.txt
+      requirements: ~/FlaskApp/requirements.txt
 
   - name: Check that the service file exists
     stat:
@@ -40,7 +40,7 @@
 
   - name: copy the file, if it doesnt exist already
     ansible.builtin.copy:
-      src: ./FlaskApp.service
+      src: ~/FlaskApp.service
       dest: /lib/systemd/system/
     become: yes
     when: not stat_result.stat.exists  
