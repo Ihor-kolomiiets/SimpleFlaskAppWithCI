@@ -29,7 +29,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-# Uncomment this when implementing Ansible in pipeline
     - name: install Ansible
       run: python3 -m pip install ansible
     - name: creating hosts file # Making inventory file
@@ -50,29 +49,3 @@ jobs:
       run: |
         ansible-playbook -u ec2-user -i ./inventory.yml \
         --private-key ./key.pem playbook.yml
-# This whole segment will be replaced with ansible
-# With created playbook
-#    - name: installing rsync
-#      run: sudo apt install rsync -y
-#    - name: copy files to ec2
-#      run: |
-#        rsync -e "ssh -i ./key.pem" ./* \
-#        ec2-user@${{ secrets.AWSEC2_PUBLIC_IP }}:./FlaskApp
-#    - name: restart FlaskApplication
-#      uses: appleboy/ssh-action@v0.1.10
-#      with:
-#        host: ${{ secrets.AWSEC2_PUBLIC_IP }}
-#        username: ec2-user
-#        key_path: ./key.pem
-#        script: |
-#          sudo yum -y install python-pip
-#          python3 -m pip install --upgrade pip
-#          pip install -r ./FlaskApp/requirements.txt
-#          if [ -f /lib/systemd/system/FlaskApp.service ]; then
-#            sudo systemctl restart FlaskApp.service
-#          else 
-#            sudo mv ./FlaskApp/FlaskApp.service /lib/systemd/system/
-#            sudo systemctl daemon-reload
-#            sudo systemctl enable FlaskApp.service
-#            sudo systemctl start FlaskApp.service
-#          fi
