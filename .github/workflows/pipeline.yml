@@ -30,12 +30,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 # Uncomment this when implementing Ansible in pipeline
-#    - name: install Ansible
-#      run: python3 -m pip install ansible
-#    - name: creating hosts file # Making inventory file
-#      run: |
-#        echo "[webserver]\n ${{ secrets.AWSEC2_PUBLIC_IP }}" \
-#        > inventory.yml
+    - name: install Ansible
+      run: python3 -m pip install ansible
+    - name: creating hosts file # Making inventory file
+      run: |
+        echo "[webserver]\n ${{ secrets.AWSEC2_PUBLIC_IP }}" \
+        > inventory.yml
     - name: create key to connect # Creating ssh key from secert
       run: |
         echo "${{ secrets.AWSEC2_SSH_KEY }}" > key.pem
@@ -46,29 +46,33 @@ jobs:
         touch ~/.ssh/known_hosts
         ssh-keyscan ${{ secrets.AWSEC2_PUBLIC_IP }} > ~/.ssh/known_hosts
         sudo chmod 600 ~/.ssh/known_hosts
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook -u ec2_user -i ./inventory.yml \
+        --private_key ./key.pem playbook.yml
 # This whole segment will be replaced with ansible
 # With created playbook
-    - name: installing rsync
-      run: sudo apt install rsync -y
-    - name: copy files to ec2
-      run: |
-        rsync -e "ssh -i ./key.pem" ./* \
-        ec2-user@${{ secrets.AWSEC2_PUBLIC_IP }}:./FlaskApp
-    - name: restart FlaskApplication
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.AWSEC2_PUBLIC_IP }}
-        username: ec2-user
-        key_path: ./key.pem
-        script: |
-          sudo yum -y install python-pip
-          python3 -m pip install --upgrade pip
-          pip install -r ./FlaskApp/requirements.txt
-          if [ -f /lib/systemd/system/FlaskApp.service ]; then
-            sudo systemctl restart FlaskApp.service
-          else 
-            sudo mv ./FlaskApp/FlaskApp.service /lib/systemd/system/
-            sudo systemctl daemon-reload
-            sudo systemctl enable FlaskApp.service
-            sudo systemctl start FlaskApp.service
-          fi
+#    - name: installing rsync
+#      run: sudo apt install rsync -y
+#    - name: copy files to ec2
+#      run: |
+#        rsync -e "ssh -i ./key.pem" ./* \
+#        ec2-user@${{ secrets.AWSEC2_PUBLIC_IP }}:./FlaskApp
+#    - name: restart FlaskApplication
+#      uses: appleboy/ssh-action@v0.1.10
+#      with:
+#        host: ${{ secrets.AWSEC2_PUBLIC_IP }}
+#        username: ec2-user
+#        key_path: ./key.pem
+#        script: |
+#          sudo yum -y install python-pip
+#          python3 -m pip install --upgrade pip
+#          pip install -r ./FlaskApp/requirements.txt
+#          if [ -f /lib/systemd/system/FlaskApp.service ]; then
+#            sudo systemctl restart FlaskApp.service
+#          else 
+#            sudo mv ./FlaskApp/FlaskApp.service /lib/systemd/system/
+#            sudo systemctl daemon-reload
+#            sudo systemctl enable FlaskApp.service
+#            sudo systemctl start FlaskApp.service
+#          fi
