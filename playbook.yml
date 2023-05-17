@@ -1,7 +1,7 @@
 ---
 - name: copy source file to remote and start web server
   hosts: webservers
-  remote_user: ec2_user
+  remote_user: ec2-user
 
   tasks:
   - name: copy files to remote
