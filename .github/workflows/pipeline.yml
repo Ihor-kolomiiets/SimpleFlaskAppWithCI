@@ -49,7 +49,7 @@ jobs:
     - name: Run Ansible Playbook
       run: |
         ansible-playbook -u ec2-user -i ./inventory.yml \
-        --private_key ./key.pem playbook.yml
+        --private-key ./key.pem playbook.yml
 # This whole segment will be replaced with ansible
 # With created playbook
 #    - name: installing rsync
