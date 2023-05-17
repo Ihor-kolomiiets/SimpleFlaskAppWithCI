@@ -1,6 +1,6 @@
 ---
 - name: copy source file to remote and start web server
-  hosts: webservers
+  hosts: webserver
   remote_user: ec2-user
 
   tasks:
@@ -11,11 +11,11 @@
   
   - name: Install pip
     ansible.builtin.yum:
-      name: python-pip
+      name: python3-pip
       state: latest
   
   - name: Upgrading pip
-    ansible.bultin.command: python3 -m pip install --upgrade pip
+    ansible.builtin.shell: python3 -m pip install --upgrade pip
   
   - name: install requirements
     ansible.builtin.pip:
@@ -41,5 +41,5 @@
   
   - name: Restart service
     ansible.builtin.service:
-      name: FLaskApp.service
+      name: FlaskApp.service
       state: restarted
